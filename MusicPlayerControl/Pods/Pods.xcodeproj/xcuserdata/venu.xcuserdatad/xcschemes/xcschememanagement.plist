@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Pods-MusicPlayerControl.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-MusicPlayerControlTests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-MusicPlayerControlUITests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UPCarouselFlowLayout.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>0C0A51C8C3DF39582A283B864F5647B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2C30F735DFEB1ECB5EFB45A6F6420E83</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A4F0CB8BA8DC26612B823BF3096FE0E1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F1AD20ADD991B5FF093D3D7EB0151C3E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
