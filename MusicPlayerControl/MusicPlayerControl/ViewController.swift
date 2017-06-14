@@ -33,28 +33,27 @@ class ViewController: UIViewController {
         return pageSize
     }
     
-    fileprivate var orientation: UIDeviceOrientation {
-        return UIDevice.current.orientation
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Delgates
         tableView.dataSource = self
         tableView.delegate = self
-        
         collectionView.dataSource = self
         collectionView.delegate = self
-        noFavErrorView.isHidden = true
         
+        //UI
+        noFavErrorView.isHidden = false
+        
+        //Network Call
         getAlbumList()
         
-        let layout = UPCarouselFlowLayout()
-        layout.sideItemScale = 0.6
-        layout.itemSize = CGSize(width: 300, height: 200)
-        collectionView.collectionViewLayout = layout
+        //CoreDataCall
+        fetchDataForFavorites(isFavorites:true)
+        fetchDataForFavorites(isFavorites:false)
         
-        self.setupLayout()
-        rotationDidChange()
+        // CollectionView Layout
+        setupCollectionViewLayout()
         
         //Search
         searchController.searchResultsUpdater = self
@@ -62,45 +61,19 @@ class ViewController: UIViewController {
         definesPresentationContext = true
         tableView.tableHeaderView = searchController.searchBar
     }
-
-    @objc fileprivate func rotationDidChange() {
-        guard !orientation.isFlat else { return }
-        let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
-        let direction: UICollectionViewScrollDirection = .horizontal//UIDeviceOrientationIsPortrait(orientation) ? .horizontal : .vertical
-        layout.scrollDirection = direction
-        if currentPage > 0 {
-            let indexPath = IndexPath(item: currentPage, section: 0)
-            let scrollPosition: UICollectionViewScrollPosition = .centeredHorizontally//UIDeviceOrientationIsPortrait(orientation) ? .centeredHorizontally : .centeredVertically
-            self.collectionView.scrollToItem(at: indexPath, at: scrollPosition, animated: false)
-        }
-    }
     
-    fileprivate func setupLayout() {
-        let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
+    fileprivate func setupCollectionViewLayout() {
+        let layout = UPCarouselFlowLayout()
+        layout.sideItemScale = 0.6
+        layout.itemSize = CGSize(width: 300, height: 200)
+        collectionView.collectionViewLayout = layout
         layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
-        rotationDidChange()
+        layout.scrollDirection = .horizontal
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let book = collectionViewDataSource[(indexPath as NSIndexPath).row]
-//        let detailsVC = DetailViewController(nibName: "DetailViewController", bundle: nil)
-//        detailsVC.book = book
-//        self.navigationController?.pushViewController(detailsVC, animated: true)
-//    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if scrollView.isKind(of: UICollectionView.self){
-            let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
-            let pageSide = (layout.scrollDirection == .horizontal) ? self.pageSize.width : self.pageSize.height
-            let offset = (layout.scrollDirection == .horizontal) ? scrollView.contentOffset.x : scrollView.contentOffset.y
-            currentPage = Int(floor((offset - pageSide / 2) / pageSide) + 1)
-            ScrollToTableViewCellAtObject(album: collectionViewDataSource[currentPage])
-        }
     }
     
     //Fetch Data Methods
@@ -124,9 +97,9 @@ class ViewController: UIViewController {
                 self.save(album: album as! Dictionary<String, Any>)
             }
             performUIUpdatesOnMain {
-                self.tableView.reloadData()
                 self.refreshControl?.stopAnimating()
                 self.fetchDataForFavorites(isFavorites:true)
+                self.fetchDataForFavorites(isFavorites:false)
             }
         }
     }
@@ -146,11 +119,19 @@ class ViewController: UIViewController {
         do {
             let fetchResults = try managedContext.fetch(fetchRequest)
             if fetchResults.count > 0 {
-                self.collectionViewDataSource.removeAll()
-                for item in fetchResults {
-                    collectionViewDataSource.append(item)
+                if isFavorites {
+                    self.collectionViewDataSource.removeAll()
+                    for item in fetchResults {
+                        collectionViewDataSource.append(item)
+                    }
+                    reloadCollectionView()
+                }else{
+                    self.tableViewDataSource.removeAll()
+                    for item in fetchResults {
+                        tableViewDataSource.append(item)
+                    }
+                    tableView.reloadData()
                 }
-                reloadCollectionView()
             }
         }
         catch{
@@ -174,7 +155,7 @@ class ViewController: UIViewController {
         do {
             let fetchResults = try managedContext.fetch(fetchRequest)
             if fetchResults.count > 0 {
-                tableViewDataSource.append(fetchResults.first!)
+//                tableViewDataSource.append(fetchResults.first!)
             }else{
                 print("None")
                 let entity = NSEntityDescription.entity(forEntityName: entityName,
@@ -199,7 +180,7 @@ class ViewController: UIViewController {
 //                bookObj.publishDate = formatter.date(from: album["published"] as! String) as NSDate?
                 do {
                     try managedContext.save()
-                    tableViewDataSource.append(albumObj)
+//                    tableViewDataSource.append(albumObj)
                 } catch let error as NSError {
                     print("Could not save. \(error), \(error.userInfo)")
                 }
@@ -234,44 +215,6 @@ class ViewController: UIViewController {
         }
         catch{
             fatalError("Failed to fetch employees: \(error)")
-        }
-    }
-    
-    func updateCellAtIndexPathForTableView(indexPath: IndexPath){
-        let cell = tableView.cellForRow(at: indexPath) as! TableViewCell
-        let album = tableViewDataSource[(indexPath as NSIndexPath).row]
-        
-        if album.isFavorite {
-            cell.favBtn.setImage(UIImage.init(named: "favoritesSelected"), for: .normal)
-            collectionViewDataSource.append(album)
-        }else{
-            cell.favBtn.setImage(UIImage.init(named: "favorites"), for: .normal)
-            if(collectionViewDataSource.contains(album)){
-                collectionViewDataSource.remove(at: collectionViewDataSource.index(of: album)!)
-            }
-        }
-        reloadCollectionView()
-        if collectionViewDataSource.count > 0{
-            let index = IndexPath(item: (collectionViewDataSource.count - 1), section: 0)
-            self.collectionView?.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-        }
-    }
-    
-    func ScrollToTableViewCellAtObject(album: Album){
-        var index: Int = 0
-        if searchController.isActive && searchController.searchBar.text != "" {
-            if filteredTableViewDataSource.contains(album){
-               index = filteredTableViewDataSource.index(of: album)!
-                let indexPath = IndexPath(item: index, section: 0)
-                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-            }
-        }
-        else {
-            if tableViewDataSource.contains(album){
-                index = tableViewDataSource.index(of: album)!
-                let indexPath = IndexPath(item: index, section: 0)
-                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-            }
         }
     }
     
@@ -330,6 +273,44 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
         let album = tableViewDataSource[(indexPath as NSIndexPath).row]
         save(isFavorite: !album.isFavorite, album: album, indexPath: indexPath)
     }
+    
+    func updateCellAtIndexPathForTableView(indexPath: IndexPath){
+        let cell = tableView.cellForRow(at: indexPath) as! TableViewCell
+        let album = tableViewDataSource[(indexPath as NSIndexPath).row]
+        
+        if album.isFavorite {
+            cell.favBtn.setImage(UIImage.init(named: "favoritesSelected"), for: .normal)
+            collectionViewDataSource.append(album)
+        }else{
+            cell.favBtn.setImage(UIImage.init(named: "favorites"), for: .normal)
+            if(collectionViewDataSource.contains(album)){
+                collectionViewDataSource.remove(at: collectionViewDataSource.index(of: album)!)
+            }
+        }
+        reloadCollectionView()
+        if collectionViewDataSource.count > 0{
+            let index = IndexPath(item: (collectionViewDataSource.count - 1), section: 0)
+            self.collectionView?.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+        }
+    }
+    
+    func ScrollToTableViewCellAtObject(album: Album){
+        var index: Int = 0
+        if searchController.isActive && searchController.searchBar.text != "" {
+            if filteredTableViewDataSource.contains(album){
+                index = filteredTableViewDataSource.index(of: album)!
+                let indexPath = IndexPath(item: index, section: 0)
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        }
+        else {
+            if tableViewDataSource.contains(album){
+                index = tableViewDataSource.index(of: album)!
+                let indexPath = IndexPath(item: index, section: 0)
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        }
+    }
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
@@ -360,6 +341,23 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
             })
         })
         return cell
+    }
+    
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //        let book = collectionViewDataSource[(indexPath as NSIndexPath).row]
+    //        let detailsVC = DetailViewController(nibName: "DetailViewController", bundle: nil)
+    //        detailsVC.book = book
+    //        self.navigationController?.pushViewController(detailsVC, animated: true)
+    //    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if scrollView.isKind(of: UICollectionView.self){
+            let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
+            let pageSide = (layout.scrollDirection == .horizontal) ? self.pageSize.width : self.pageSize.height
+            let offset = (layout.scrollDirection == .horizontal) ? scrollView.contentOffset.x : scrollView.contentOffset.y
+            currentPage = Int(floor((offset - pageSide / 2) / pageSide) + 1)
+            ScrollToTableViewCellAtObject(album: collectionViewDataSource[currentPage])
+        }
     }
     
     func reloadCollectionView(){
