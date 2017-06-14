@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 func taskForGetAlbumList(completionHandlerForGET: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
-    var urlStr = "https://gist.githubusercontent.com/Venu519/56b6fe6555e6fad72bf049c25c2cdeb8/raw/c86c08c686b1f31e72336afab8fcae497b13f2a4/books.json"
+    var urlStr = "https://gist.githubusercontent.com/Venu519/381244828ab8a1b7e63a37433c1da103/raw/59317ca02a7a372c74e025c388b00692ac48b427/albums.json"
     
     let url = URL(string: urlStr)
     let request = URLRequest(url: url!)

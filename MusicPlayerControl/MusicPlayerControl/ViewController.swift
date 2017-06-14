@@ -164,9 +164,9 @@ class ViewController: UIViewController {
                 let albumObj = NSManagedObject(entity: entity,
                                               insertInto: managedContext) as! Album
                 
-                albumObj.artist = (album["author"] as? Dictionary<String,Any>!)?["name"] as? String
+                albumObj.artist = (album["artist"] as? Dictionary<String,Any>!)?["name"] as? String
 //                albumObj.authorAvatar = (album["author"] as? Dictionary<String,Any>!)?["avatar"] as? String
-                albumObj.albumTitle =  album["name"] as? String
+                albumObj.albumTitle =  album["songTitle"] as? String
 //                albumObj.bookdesc = album["description"] as? String
                 albumObj.cover = album["cover"] as? String
                 albumObj.albumId = album["id"] as? String
