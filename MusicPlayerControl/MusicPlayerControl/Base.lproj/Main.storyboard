@@ -25,20 +25,6 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="gLj-kz-axj">
                                 <rect key="frame" x="177" y="323" width="20" height="20"/>
                             </activityIndicatorView>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GX2-bx-J6f" userLabel="No Favorites">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="240"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="No Favorites!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sdL-gV-udT">
-                                        <rect key="frame" x="166" y="109" width="42" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="U5P-G9-P5a">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="241"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -101,7 +87,7 @@
                                 <rect key="frame" x="0.0" y="249" width="375" height="410"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TableViewCell" id="waf-Jv-5j0" customClass="TableViewCell" customModule="MusicPlayerControl" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TableViewCell" id="waf-Jv-5j0" customClass="TableViewCell" customModule="MusicPlayerControl" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="64"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="waf-Jv-5j0" id="GXd-5v-Slx">
@@ -160,6 +146,23 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GX2-bx-J6f" userLabel="No Favorites Screen">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="240"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Favorites" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sdL-gV-udT">
+                                        <rect key="frame" x="110.5" y="105" width="153" height="31.5"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="27"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="sdL-gV-udT" firstAttribute="centerX" secondItem="GX2-bx-J6f" secondAttribute="centerX" id="OAJ-MK-F48"/>
+                                    <constraint firstItem="sdL-gV-udT" firstAttribute="centerY" secondItem="GX2-bx-J6f" secondAttribute="centerY" id="lJh-ap-8we"/>
+                                    <constraint firstAttribute="height" constant="240" id="njv-iZ-y1M"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -169,15 +172,19 @@
                             <constraint firstItem="gLj-kz-axj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="161" id="Ckf-xd-hXv"/>
                             <constraint firstAttribute="trailingMargin" secondItem="gLj-kz-axj" secondAttribute="trailing" constant="162" id="KDF-0y-AxA"/>
                             <constraint firstAttribute="trailingMargin" secondItem="9h6-3k-ksi" secondAttribute="trailing" constant="-16" id="Whg-sI-DvQ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="GX2-bx-J6f" secondAttribute="trailing" constant="-16" id="Xgk-BR-27r"/>
                             <constraint firstItem="9h6-3k-ksi" firstAttribute="top" secondItem="U5P-G9-P5a" secondAttribute="bottom" constant="8" id="bn6-cf-fDM"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="gLj-kz-axj" secondAttribute="bottom" constant="324" id="e1F-cq-5Ga"/>
                             <constraint firstAttribute="trailingMargin" secondItem="U5P-G9-P5a" secondAttribute="trailing" constant="-16" id="h1M-EP-97U"/>
                             <constraint firstItem="U5P-G9-P5a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="utQ-5N-L8d"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="9h6-3k-ksi" secondAttribute="bottom" constant="8" id="vDV-Zs-ajq"/>
+                            <constraint firstItem="9h6-3k-ksi" firstAttribute="top" secondItem="GX2-bx-J6f" secondAttribute="bottom" constant="9" id="vLF-2u-lqF"/>
+                            <constraint firstItem="GX2-bx-J6f" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="wUx-bk-15s"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="U5P-G9-P5a" id="8fJ-9V-vyT"/>
+                        <outlet property="noFavErrorView" destination="GX2-bx-J6f" id="g9d-zk-1VS"/>
                         <outlet property="refreshControl" destination="gLj-kz-axj" id="WMM-lI-Fij"/>
                         <outlet property="tableView" destination="9h6-3k-ksi" id="v9E-NS-8sb"/>
                     </connections>

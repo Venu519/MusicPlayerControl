@@ -12,6 +12,7 @@ import UPCarouselFlowLayout
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var noFavErrorView: UIView!
     @IBOutlet weak var refreshControl: UIActivityIndicatorView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
@@ -43,6 +44,7 @@ class ViewController: UIViewController {
         
         collectionView.dataSource = self
         collectionView.delegate = self
+        noFavErrorView.isHidden = true
         
         getAlbumList()
         
@@ -148,7 +150,7 @@ class ViewController: UIViewController {
                 for item in fetchResults {
                     collectionViewDataSource.append(item)
                 }
-                collectionView.reloadData()
+                reloadCollectionView()
             }
         }
         catch{
@@ -248,7 +250,7 @@ class ViewController: UIViewController {
                 collectionViewDataSource.remove(at: collectionViewDataSource.index(of: album)!)
             }
         }
-        collectionView.reloadData()
+        reloadCollectionView()
         if collectionViewDataSource.count > 0{
             let index = IndexPath(item: (collectionViewDataSource.count - 1), section: 0)
             self.collectionView?.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
@@ -358,6 +360,15 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
             })
         })
         return cell
+    }
+    
+    func reloadCollectionView(){
+        if collectionViewDataSource.count>0{
+            noFavErrorView.isHidden = true
+        }else{
+            noFavErrorView.isHidden = false
+        }
+        collectionView.reloadData()
     }
 }
 
