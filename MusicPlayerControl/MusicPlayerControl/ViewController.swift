@@ -62,7 +62,7 @@ class ViewController: UIViewController {
     fileprivate func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
 //        layout.sideItemScale = 0.6
-        layout.itemSize = CGSize(width: 300, height: 200)
+        layout.itemSize = CGSize(width: 300, height: collectionView.bounds.size.height)
         collectionView.collectionViewLayout = layout
 //        layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
         layout.scrollDirection = .horizontal
