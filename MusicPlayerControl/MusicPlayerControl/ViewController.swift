@@ -43,7 +43,6 @@ class ViewController: UIViewController {
         tableView.delegate = self
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.backgroundColor = #colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)
         
         //Network Call
         getAlbumList()
@@ -54,6 +53,7 @@ class ViewController: UIViewController {
         
         // CollectionView Layout
         setupCollectionViewLayout()
+        reloadCollectionView()
         
         //Search
         searchController.searchResultsUpdater = self
@@ -64,7 +64,7 @@ class ViewController: UIViewController {
     
     fileprivate func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
-//        layout.sideItemScale = 0.6
+        layout.minimumInteritemSpacing = 20
         layout.itemSize = CGSize(width: cellWidth, height: collectionView.bounds.size.height)
         collectionView.collectionViewLayout = layout
 //        layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
