@@ -9,6 +9,8 @@
 import UIKit
 import CoreData
 
+let cellWidth:CGFloat = 300.0
+
 class ViewController: UIViewController {
 
     @IBOutlet weak var refreshControl: UIActivityIndicatorView!
@@ -41,6 +43,7 @@ class ViewController: UIViewController {
         tableView.delegate = self
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.backgroundColor = #colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)
         
         //Network Call
         getAlbumList()
@@ -62,7 +65,7 @@ class ViewController: UIViewController {
     fileprivate func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
 //        layout.sideItemScale = 0.6
-        layout.itemSize = CGSize(width: 300, height: collectionView.bounds.size.height)
+        layout.itemSize = CGSize(width: cellWidth, height: collectionView.bounds.size.height)
         collectionView.collectionViewLayout = layout
 //        layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
         layout.scrollDirection = .horizontal
@@ -347,6 +350,42 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView.isKind(of: UICollectionView.self){
+            //COllectionView Scrolling
+            var scrollIndex:CGFloat = 0.0
+            let numberOfCellsAtOffset = scrollView.contentOffset.x/cellWidth
+            let decimalValue = numberOfCellsAtOffset - floor(numberOfCellsAtOffset)
+            if (decimalValue > 0.5) {
+                scrollIndex = ceil(numberOfCellsAtOffset)
+            }else{
+                scrollIndex = floor(numberOfCellsAtOffset)
+            }
+            
+            let newIndexPath = NSIndexPath.init(item: Int(scrollIndex), section: 0)
+            self.collectionView.scrollToItem(at: newIndexPath as IndexPath, at: .left, animated: true)
+            
+            //TableView Scrolling
+            let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+            let pageSide = (layout.scrollDirection == .horizontal) ? self.pageSize.width : self.pageSize.height
+            let offset = (layout.scrollDirection == .horizontal) ? scrollView.contentOffset.x : scrollView.contentOffset.y
+            currentPage = Int(floor((offset - pageSide / 2) / pageSide) + 1)
+            ScrollToTableViewCellAtObject(album: collectionViewDataSource[currentPage])
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if scrollView.isKind(of: UICollectionView.self){
+            var scrollIndex:CGFloat = 0.0
+            let numberOfCellsAtOffset = scrollView.contentOffset.x/cellWidth
+            let decimalValue = numberOfCellsAtOffset - floor(numberOfCellsAtOffset)
+            if (decimalValue > 0.5) {
+                scrollIndex = ceil(numberOfCellsAtOffset)
+            }else{
+                scrollIndex = floor(numberOfCellsAtOffset)
+            }
+            
+            let newIndexPath = NSIndexPath.init(item: Int(scrollIndex), section: 0)
+            self.collectionView.scrollToItem(at: newIndexPath as IndexPath, at: .left, animated: true)
+            
             let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
             let pageSide = (layout.scrollDirection == .horizontal) ? self.pageSize.width : self.pageSize.height
             let offset = (layout.scrollDirection == .horizontal) ? scrollView.contentOffset.x : scrollView.contentOffset.y
