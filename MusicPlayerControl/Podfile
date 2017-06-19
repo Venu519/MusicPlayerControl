@@ -6,7 +6,6 @@ target 'MusicPlayerControl' do
   use_frameworks!
 
   # Pods for MusicPlayerControl
-  pod "UPCarouselFlowLayout"
 
   target 'MusicPlayerControlTests' do
     inherit! :search_paths

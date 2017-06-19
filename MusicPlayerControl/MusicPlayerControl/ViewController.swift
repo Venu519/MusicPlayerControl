@@ -8,14 +8,13 @@
 
 import UIKit
 import CoreData
-import UPCarouselFlowLayout
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var noFavErrorView: UIView!
     @IBOutlet weak var refreshControl: UIActivityIndicatorView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var collectionHeightConstraint: NSLayoutConstraint!
     var tableViewDataSource = [Album]()
     var collectionViewDataSource = [Album]()
     let searchController = UISearchController(searchResultsController: nil)
@@ -23,7 +22,7 @@ class ViewController: UIViewController {
     fileprivate var currentPage: Int = 0
     
     fileprivate var pageSize: CGSize {
-        let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
+        let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         var pageSize = layout.itemSize
         if layout.scrollDirection == .horizontal {
             pageSize.width += layout.minimumLineSpacing
@@ -35,15 +34,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.edgesForExtendedLayout = []
 
         // Delgates
         tableView.dataSource = self
         tableView.delegate = self
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-        //UI
-        noFavErrorView.isHidden = false
         
         //Network Call
         getAlbumList()
@@ -63,11 +60,11 @@ class ViewController: UIViewController {
     }
     
     fileprivate func setupCollectionViewLayout() {
-        let layout = UPCarouselFlowLayout()
-        layout.sideItemScale = 0.6
+        let layout = UICollectionViewFlowLayout()
+//        layout.sideItemScale = 0.6
         layout.itemSize = CGSize(width: 300, height: 200)
         collectionView.collectionViewLayout = layout
-        layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
+//        layout.spacingMode = UPCarouselFlowLayoutSpacingMode.overlap(visibleOffset: 30)
         layout.scrollDirection = .horizontal
     }
     
@@ -343,16 +340,14 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
         return cell
     }
     
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //        let book = collectionViewDataSource[(indexPath as NSIndexPath).row]
-    //        let detailsVC = DetailViewController(nibName: "DetailViewController", bundle: nil)
-    //        detailsVC.book = book
-    //        self.navigationController?.pushViewController(detailsVC, animated: true)
-    //    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let album = collectionViewDataSource[(indexPath as NSIndexPath).row]
+        ScrollToTableViewCellAtObject(album: album)
+    }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView.isKind(of: UICollectionView.self){
-            let layout = self.collectionView.collectionViewLayout as! UPCarouselFlowLayout
+            let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
             let pageSide = (layout.scrollDirection == .horizontal) ? self.pageSize.width : self.pageSize.height
             let offset = (layout.scrollDirection == .horizontal) ? scrollView.contentOffset.x : scrollView.contentOffset.y
             currentPage = Int(floor((offset - pageSide / 2) / pageSide) + 1)
@@ -361,12 +356,15 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource{
     }
     
     func reloadCollectionView(){
-        if collectionViewDataSource.count>0{
-            noFavErrorView.isHidden = true
-        }else{
-            noFavErrorView.isHidden = false
-        }
         collectionView.reloadData()
+        if collectionViewDataSource.count > 0 {
+            collectionHeightConstraint.constant = 221.0
+        }else{
+            collectionHeightConstraint.constant = 0.0
+        }
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
